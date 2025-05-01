@@ -1,16 +1,61 @@
 <!doctype html>
-<html>
+<html lang="de">
     <head>
         <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Dolibarr Client</title>
+        <style>
+            body {
+                font-family: sans-serif;
+                padding: 20px;
+            }
+            input {
+                width: 100%;
+                padding: 10px;
+                margin-bottom: 10px;
+            }
+            button {
+                padding: 10px 20px;
+            }
+        </style>
     </head>
     <body>
-        <h1>Dolibarr Client</h1>
-        <div id="content">
-            <label for="domain">Gib deine Dolibarr-Domain ein:</label>
-            <input type="text" id="domain" placeholder="https://example.com" />
-            <button onclick="connect()">Verbinden</button>
-        </div>
-        <script src="renderer.js"></script>
+        <h2>Dolibarr-Server eingeben</h2>
+        <input
+            type="text"
+            id="urlInput"
+            placeholder="z. B. http://192.168.3.85:8383"
+        />
+        <button onclick="submitUrl()">Verbinden</button>
+
+        <script>
+            // Setze die vorher gespeicherte URL (falls vorhanden)
+            const savedUrl = localStorage.getItem("lastUrl");
+            if (savedUrl) {
+                document.getElementById("urlInput").value = savedUrl;
+            }
+
+            // Funktion zum URL validieren
+            function validateUrl(url) {
+                const regex =
+                    /^(https?:\/\/)([a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*(\.[a-zA-Z]{2,})?(:\d+)?(\/.*)?)$/;
+                return regex.test(url);
+            }
+
+            // URL absenden und validieren
+            function submitUrl() {
+                const url = document.getElementById("urlInput").value;
+
+                if (validateUrl(url)) {
+                    // Speichere die URL für die nächste Verwendung
+                    localStorage.setItem("lastUrl", url);
+
+                    // Hole die Hauptfenster-URL
+                    window.electronAPI.openMainWindow(url);
+                } else {
+                    alert("Ungültige URL. Bitte eine gültige URL eingeben.");
+                }
+            }
+        </script>
     </body>
 </html>
